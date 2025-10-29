@@ -14,17 +14,25 @@
   <script>
     document.getElementById('userForm').addEventListener('submit', async (event) => {
       event.preventDefault();
+
       const id = document.getElementById('id').value;
       const name = document.getElementById('name').value;
 
-      const response = await fetch('http://localhost:3000/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, name })
-      });
+      console.log("Отправляем JSON:", { id, name }); // ЛОГ на фронте
 
-      const result = await response.json();
-      alert(JSON.stringify(result));
+      try {
+        const response = await fetch('/users', { // <-- тут "/" чтобы работало и локально, и на Railway
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, name })
+        });
+
+        const result = await response.json();
+        console.log("Ответ сервера:", result);
+        alert(JSON.stringify(result));
+      } catch (error) {
+        console.error('Ошибка запроса:', error);
+      }
     });
   </script>
 </body>
