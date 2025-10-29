@@ -1,30 +1,34 @@
-const express = require('express')
-const cors = require('cors')
-const path = require('path')
-const app = express()
-const users = require('./data.json')
+const express = require('express');
+const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
+const app = express();
 
-app.use(cors())
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
 
-// Отдаём HTML файл
+const dataFilePath = path.join(__dirname, 'data.json');
+
+// Отдаём HTML форму
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'create-user.html'))
-})
+  res.sendFile(path.join(__dirname, 'create-user.html'));
+});
 
-// Вернуть всех юзеров
+// Получить список пользователей
 app.get('/users', (req, res) => {
-  res.json(users)
-})
+  const users = JSON.parse(fs.readFileSync(dataFilePath, 'utf8'));
+  res.json(users);
+});
 
-// Добавить нового юзера
+// Добавить пользователя
 app.post('/users', (req, res) => {
-  const newUser = req.body
-  users.push(newUser)
-  res.json({ message: 'User added!', users })
-})
+  const users = JSON.parse(fs.readFileSync(dataFilePath, 'utf8'));
+  users.push(req.body);
 
-const PORT = process.env.PORT || 3000
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`)
-})
+  fs.writeFileSync(dataFilePath, JSON.stringify(users, null, 2));
+
+  res.json({ message: 'User added!', users });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running http://localhost:${PORT}`));
