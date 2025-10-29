@@ -1,29 +1,30 @@
 const express = require('express')
 const cors = require('cors')
+const path = require('path')
 const app = express()
 const users = require('./data.json')
 
-// Middleware
 app.use(cors())
 app.use(express.json())
 
-// Routes
+// Отдаём HTML файл
 app.get('/', (req, res) => {
-  res.send('Hello from Express!')
+  res.sendFile(path.join(__dirname, 'create-user.html'))
 })
 
+// Вернуть всех юзеров
 app.get('/users', (req, res) => {
   res.json(users)
 })
 
+// Добавить нового юзера
 app.post('/users', (req, res) => {
   const newUser = req.body
   users.push(newUser)
   res.json({ message: 'User added!', users })
 })
 
-// ДЛЯ Railway — ОБЯЗАТЕЛЬНО!
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+  console.log(`Server running at http://localhost:${PORT}`)
 })
